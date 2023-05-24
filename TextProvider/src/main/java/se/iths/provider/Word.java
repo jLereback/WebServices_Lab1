@@ -5,6 +5,6 @@ import se.iths.service.StringCalculator;
 public class Word implements StringCalculator {
     @Override
     public int calculate(String stringToCalculate) {
-        return 0;
+        return stringToCalculate.split(" ").length;
     }
 }
