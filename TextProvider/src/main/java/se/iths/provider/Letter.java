@@ -4,10 +4,10 @@ import se.iths.service.StringCalculator;
 import se.iths.service.Type;
 import se.iths.service.TypeOfCalc;
 
-public class Word implements StringCalculator {
+public class Letter implements StringCalculator {
     @Override
-    @TypeOfCalc(Type.WORD)
+    @TypeOfCalc(Type.LETTER)
     public int calculate(String stringToCalculate) {
-        return stringToCalculate.split(" ").length;
+        return stringToCalculate.length();
     }
 }
