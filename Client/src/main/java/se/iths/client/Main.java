@@ -1,21 +1,14 @@
 package se.iths.client;
 
-import se.iths.provider.Letter;
-import se.iths.provider.Sentence;
-import se.iths.provider.Word;
+import se.iths.service.Calculate;
+import se.iths.service.StringCalculator;
+import se.iths.service.Type;
 
+import java.util.List;
 import java.util.Scanner;
+import java.util.ServiceLoader;
 
 public class Main {
-/*    public static void main(String[] args) {
-        Letter letter = new Letter();
-        System.out.println(letter.calculate("This is a string. This is also a string"));
-        Word word = new Word();
-        System.out.println(word.calculate("This is a string. This is also a string"));
-        Sentence sentence = new Sentence();
-        System.out.println(sentence.calculate("This is a string. This is also a string"));
-    }*/
-
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -27,12 +20,13 @@ public class Main {
         } while (!choice.equals("e"));
 
     }
+
     public static void printMenu() {
         System.out.println("""
                                 
-                Welcome to Disc Shop!
-                =====================
-                What would you like to count:
+                Welcome to String Calculator!
+                =============================
+                What would you like to calculate:
                 1. Letters
                 2. Sentences
                 3. Words
@@ -53,26 +47,46 @@ public class Main {
 
     private static void letter() {
         askForString();
-        String stringToCalc = sc.nextLine();
-
-        Letter letter = new Letter();
-        System.out.println(letter.calculate(stringToCalc));
+        calculateLetters(sc.nextLine());
     }
 
     private static void sentence() {
         askForString();
-        String stringToCalc = sc.nextLine();
-
-        Sentence sentence = new Sentence();
-        System.out.println(sentence.calculate(stringToCalc));
+        calculateSentences(sc.nextLine());
     }
 
     private static void word() {
         askForString();
-        String stringToCalc = sc.nextLine();
+        calculateWords(sc.nextLine());
+    }
 
-        Word word = new Word();
-        System.out.println(word.calculate(stringToCalc));
+    private static List<StringCalculator> getCalculation(Type typeToCalc) {
+        ServiceLoader<StringCalculator> serviceLoader = ServiceLoader.load(StringCalculator.class);
+        return serviceLoader.stream()
+                .filter(c -> c.type().isAnnotationPresent(Calculate.class)
+                        && c.type().getAnnotation(Calculate.class)
+                        .value()
+                        .equals(typeToCalc))
+                .map(ServiceLoader.Provider::get)
+                .toList();
+    }
+
+    private static void calculateLetters(String stringToCalculate) {
+        for (var string : getCalculation(Type.LETTER)) {
+            System.out.println("The string contains " + string.calculate(stringToCalculate) + " letters");
+        }
+    }
+
+    private static void calculateSentences(String stringToCalculate) {
+        for (var string : getCalculation(Type.SENTENCE)) {
+            System.out.println("The string contains " + string.calculate(stringToCalculate) + " sentences");
+        }
+    }
+
+    private static void calculateWords(String stringToCalculate) {
+        for (var string : getCalculation(Type.WORD)) {
+            System.out.println("The string contains " + string.calculate(stringToCalculate) + " words");
+        }
     }
 
     private static void askForString() {
