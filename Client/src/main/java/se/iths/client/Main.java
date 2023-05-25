@@ -1,8 +1,8 @@
 package se.iths.client;
 
-import se.iths.service.Calculate;
+import se.iths.service.annotation.Calculate;
 import se.iths.service.StringCalculator;
-import se.iths.service.Type;
+import se.iths.service.annotation.Type;
 
 import java.util.List;
 import java.util.Scanner;
@@ -23,11 +23,11 @@ public class Main {
 
     public static void printMenu() {
         System.out.println("""
-                                
+  
                 Welcome to String Calculator!
                 =============================
                 What would you like to calculate:
-                1. Letters
+                1. Characters
                 2. Sentences
                 3. Words
                 e. Quit
@@ -72,20 +72,20 @@ public class Main {
     }
 
     private static void calculateLetters(String stringToCalculate) {
-        for (var string : getCalculation(Type.LETTER)) {
-            System.out.println("The string contains " + string.calculate(stringToCalculate) + " letters");
+        for (var string : getCalculation(Type.CHARACTER)) {
+            System.out.println("The string contains " + string.calculate(stringToCalculate) + " character(s)");
         }
     }
 
     private static void calculateSentences(String stringToCalculate) {
         for (var string : getCalculation(Type.SENTENCE)) {
-            System.out.println("The string contains " + string.calculate(stringToCalculate) + " sentences");
+            System.out.println("The string contains " + string.calculate(stringToCalculate) + " sentence(s)");
         }
     }
 
     private static void calculateWords(String stringToCalculate) {
         for (var string : getCalculation(Type.WORD)) {
-            System.out.println("The string contains " + string.calculate(stringToCalculate) + " words");
+            System.out.println("The string contains " + string.calculate(stringToCalculate) + " word(s)");
         }
     }
 

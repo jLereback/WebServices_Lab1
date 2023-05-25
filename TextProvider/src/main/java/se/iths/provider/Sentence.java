@@ -1,8 +1,8 @@
 package se.iths.provider;
 
 import se.iths.service.StringCalculator;
-import se.iths.service.Type;
-import se.iths.service.Calculate;
+import se.iths.service.annotation.Type;
+import se.iths.service.annotation.Calculate;
 
 @Calculate(Type.SENTENCE)
 public class Sentence implements StringCalculator {
