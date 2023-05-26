@@ -12,12 +12,16 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        int choice;
+        String choice;
         do {
             printMenu();
-            choice = Integer.parseInt(sc.nextLine());
-            calculateType(choice);
-        } while (choice != 0);
+            choice = sc.nextLine();
+            try {
+                calculateType(Integer.parseInt(choice));
+            } catch (NumberFormatException e) {
+                System.out.println("Please choose one of the alternatives below:");
+            }
+        } while (!choice.equals("0"));
     }
 
     public static void printMenu() {
