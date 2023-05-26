@@ -1,7 +1,7 @@
 package se.iths.client;
 
-import se.iths.service.annotation.Calculate;
 import se.iths.service.StringCalculator;
+import se.iths.service.annotation.Calculate;
 import se.iths.service.annotation.Type;
 
 import java.util.List;
@@ -12,52 +12,53 @@ public class Main {
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        String choice;
+        int choice;
         do {
             printMenu();
-            choice = sc.nextLine().toLowerCase();
-            switchMenu(choice);
-        } while (!choice.equals("e"));
-
+            choice = Integer.parseInt(sc.nextLine());
+            calculateType(choice);
+        } while (choice != 0);
     }
 
     public static void printMenu() {
-        System.out.println("""
-  
+        System.out.printf("""
+                  
                 Welcome to String Calculator!
                 =============================
                 What would you like to calculate:
-                1. Characters
-                2. Sentences
-                3. Words
-                e. Quit
-                """);
+                0. Quit
+                %s
+                """, printOptions());
     }
 
-    private static void switchMenu(String choice) {
+    private static StringBuilder printOptions() {
+        StringBuilder options = new StringBuilder();
+        for (int i = 0; i < getTypes().size(); i++)
+            options.append(i + 1).append(". ").append(getTypes().get(i)).append("\n");
+        return options;
+    }
 
-        switch (choice) {
-            case "1" -> letter();
-            case "2" -> sentence();
-            case "3" -> word();
-            case "e" -> quit();
-            default -> System.out.println("Please choose one of the alternatives below:");
+    private static List<Type> getTypes() {
+        return ServiceLoader.load(StringCalculator.class)
+                .stream()
+                .filter(c -> c.type().isAnnotationPresent(Calculate.class))
+                .map(c -> c.type().getAnnotation(Calculate.class).value())
+                .toList();
+    }
+
+    private static void calculateType(int choice) {
+        if (choice == 0)
+            quit();
+        else {
+            askForString();
+            calculateString(Type.values()[choice - 1], sc.nextLine());
         }
     }
 
-    private static void letter() {
-        askForString();
-        calculateLetters(sc.nextLine());
-    }
-
-    private static void sentence() {
-        askForString();
-        calculateSentences(sc.nextLine());
-    }
-
-    private static void word() {
-        askForString();
-        calculateWords(sc.nextLine());
+    private static void calculateString(Type type, String stringToCalc) {
+        for (var string : getCalculation(type))
+            System.out.printf("The string contains %s %s(s)\n",
+                    string.calculate(stringToCalc), type.toString().toLowerCase());
     }
 
     private static List<StringCalculator> getCalculation(Type typeToCalc) {
@@ -69,24 +70,6 @@ public class Main {
                         .equals(typeToCalc))
                 .map(ServiceLoader.Provider::get)
                 .toList();
-    }
-
-    private static void calculateLetters(String stringToCalculate) {
-        for (var string : getCalculation(Type.CHARACTER)) {
-            System.out.println("The string contains " + string.calculate(stringToCalculate) + " character(s)");
-        }
-    }
-
-    private static void calculateSentences(String stringToCalculate) {
-        for (var string : getCalculation(Type.SENTENCE)) {
-            System.out.println("The string contains " + string.calculate(stringToCalculate) + " sentence(s)");
-        }
-    }
-
-    private static void calculateWords(String stringToCalculate) {
-        for (var string : getCalculation(Type.WORD)) {
-            System.out.println("The string contains " + string.calculate(stringToCalculate) + " word(s)");
-        }
     }
 
     private static void askForString() {
